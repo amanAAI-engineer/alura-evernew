@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block title %}How it works{% endblock %}
+{% block content %}
+<section class="dark"><div class="wrap" style="padding:72px 24px"><div class="eyebrow">How it works</div>
+  <h1 class="h1" style="margin:10px 0 18px">Clean. <span class="accent">Protect.</span> Preserve.</h1>
+  <p class="lead">Cleaning removes visible dirt. ALURA EverNew adds a layer of antimicrobial surface protection after cleaning, so the interior stays fresher and better protected between deep cleans.</p></div></section>
+<section class="sec"><div class="wrap"><div class="eyebrow">Bacti Barrier™ Technology</div><h2 class="h2" style="margin:8px 0 12px">A protective layer that keeps working</h2>
+  <p class="lead">Once dry, the treatment forms a protective antimicrobial surface layer that keeps eliminating the microbes that cause deterioration and discoloration of surfaces.</p>
+  <div class="grid g2" style="margin-top:28px"><div class="card"><h3>Cleaned, but untreated</h3><p style="margin:0">Invisible microbes stay on the surface, release biochemicals and slowly cause stains and discoloration.</p></div>
+  <div class="card" style="border-color:var(--green);background:var(--tint)"><h3>Cleaned and treated with EverNew</h3><p style="margin:0">The antimicrobial surface layer keeps eliminating microbes, protecting the surface from staining and discoloration.</p></div></div></div></section>
+<section class="sec white" id="guide"><div class="wrap"><h2 class="h2" style="margin-bottom:24px">Professional application guide</h2>
+  <div class="grid g4">{% for n,t,d in [(1,'Clean','Thoroughly clean the interior to remove visible dirt and residue.'),(2,'Dry','Make sure every surface to be treated is clean and fully dry.'),(3,'Apply','Spray EverNew evenly on approved surfaces: seats, seat belts, armrests, door interiors, steering wheel and dashboard.'),(4,'Cure','Allow the treatment to dry naturally for full effectiveness.')] %}
+  <div class="card"><div class="stepn">{{n}}</div><h3>{{t}}</h3><p style="margin:0">{{d}}</p></div>{% endfor %}</div>
+  <div class="grid g2" style="margin-top:24px"><div class="notice"><b>Act fast after an incident.</b> After food spills, vomit or travel with pets, clean and treat the affected areas within 24 hours.</div><div class="warnbox"><b>Do not use on glass or screens.</b> For professional use only.</div></div></div></section>
+<section class="sec" id="faq"><div class="wrap" style="max-width:860px"><h2 class="h2" style="margin-bottom:24px">Frequently asked questions</h2>
+  {% for q,a in [('When should EverNew be applied?','After the interior has been thoroughly cleaned and dried. After incidents such as food spills, vomit or travel with pets, clean and treat the affected areas within 24 hours.'),('Does EverNew replace interior cleaning?','No. Cleaning removes visible dirt. EverNew adds a layer of antimicrobial surface protection after cleaning.'),('Which surfaces can it be used on?','Seats, seat belts, armrests, door interiors, steering wheel and dashboard.'),('Can I use it on glass or screens?','No. Do not use EverNew on glass or screens.'),('Is EverNew safe?','EverNew is non-toxic and non-leaching.'),('Who can apply EverNew?','EverNew is a professional treatment, for use by detailing, car wash and cleaning professionals.'),('How long does the protection last?','[Protection duration to be confirmed from test data.]')] %}
+  <details class="faq" {{ 'open' if loop.first }}><summary>{{q}}</summary><p>{{a}}</p></details>{% endfor %}</div></section>
+<section class="teal"><div class="wrap" style="padding:56px 24px;text-align:center"><h2 class="h2">Ready to protect every interior?</h2>
+  <div class="row" style="justify-content:center;margin-top:16px"><a class="btn solid" href="/shop">Order now</a><a class="btn ghost" href="/about#contact">Ask a question</a></div></div></section>
+{% endblock %}

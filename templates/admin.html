@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}Admin{% endblock %}
+{% block content %}<section class="sec" style="padding-top:36px"><div class="wrap">
+<div class="row" style="justify-content:space-between;margin-bottom:16px"><h1 class="h2">Admin</h1>
+  <form method="post" action="/admin/logout"><button class="btn ghost sm">Log out</button></form></div>
+<p><b>{{stats.n}}</b> confirmed orders · <b>{{stats.rev|inr}}</b> revenue</p>
+<div class="tabs">{% for t in ['orders','enquiries','messages','products'] %}<a href="?tab={{t}}" class="{{ 'on' if tab==t }}">{{t|capitalize}}</a>{% endfor %}<a href="/admin/orders.csv">Export orders CSV</a></div>
+{% if tab=='orders' %}<div style="overflow-x:auto"><table class="t"><tr><th>Order</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th></th></tr>
+{% for o,items in orders %}<tr><td><b>{{o.order_no}}</b><br><small>{{o.created}}</small></td>
+<td>{{o.name}}<br><small>{{o.phone}} · {{o.email}}<br>{{o.line1}}, {{o.city}} {{o.pin}}, {{o.state}}{% if o.gstin %}<br>{{o.biz_name}} · {{o.gstin}}{% endif %}</small></td>
+<td>{{o.total|inr}}<br><small>{% for i in items %}{{i.label}}×{{i.qty}} {% endfor %}</small></td><td>{{o.pay}} · {{o.pay_status}}</td>
+<td><form method="post" action="/admin/order/{{o.order_no}}/status" class="row" style="flex-wrap:nowrap"><input type="hidden" name="csrf" value="{{csrf}}"><select name="status" style="height:40px">{% for s in statuses %}<option {{ 'selected' if s==o.status }}>{{s}}</option>{% endfor %}</select><button class="btn sm solid">Save</button></form></td>
+<td><a href="/invoice/{{o.order_no}}" target="_blank">Invoice</a></td></tr>{% else %}<tr><td colspan="6">No orders yet.</td></tr>{% endfor %}</table></div>
+{% elif tab=='enquiries' %}<div style="overflow-x:auto"><table class="t"><tr><th>Date</th><th>Business</th><th>Contact</th><th>Details</th></tr>{% for r in rows %}<tr><td>{{r.created}}</td><td><b>{{r.business}}</b><br>{{r.btype}} · {{r.city}}</td><td>{{r.person}}<br>{{r.phone}}<br>{{r.email}}</td><td>Volume: {{r.volume}}{% if r.gstin %}<br>GSTIN {{r.gstin}}{% endif %}<br>{{r.message}}</td></tr>{% else %}<tr><td colspan="4">No enquiries yet.</td></tr>{% endfor %}</table></div>
+{% elif tab=='messages' %}<div style="overflow-x:auto"><table class="t"><tr><th>Date</th><th>From</th><th>Topic</th><th>Message</th></tr>{% for r in rows %}<tr><td>{{r.created}}</td><td>{{r.name}}<br>{{r.contact}}</td><td>{{r.topic}}<br>{{r.order_no}}</td><td>{{r.message}}</td></tr>{% else %}<tr><td colspan="4">No messages yet.</td></tr>{% endfor %}</table></div>
+{% else %}<h2 class="cond" style="font-size:30px;margin-bottom:8px">Packs &amp; prices</h2><p style="color:var(--grey)">Prices are GST-inclusive, in rupees.</p>
+{% for p in packs %}<form method="post" action="/admin/pack/{{p.id}}" class="card row" style="margin-bottom:10px"><input type="hidden" name="csrf" value="{{csrf}}">
+<label>Label<input name="label" value="{{p.label}}"></label><label>Price (₹)<input name="price" type="number" step="0.01" min="0" value="{{ '%.2f' % (p.price/100) }}"></label><label>Stock<input name="stock" type="number" min="0" value="{{p.stock}}"></label>
+<label style="flex-direction:row;align-items:center"><input type="checkbox" name="active" {{ 'checked' if p.active }}> Active</label><button class="btn solid sm">Save</button></form>{% endfor %}
+<h2 class="cond" style="font-size:30px;margin:28px 0 8px">Coupons</h2>
+<table class="t" style="max-width:520px"><tr><th>Code</th><th>% off</th><th>Active</th></tr>{% for c in coupons %}<tr><td>{{c.code}}</td><td>{{c.percent}}</td><td>{{ 'yes' if c.active else 'no' }}</td></tr>{% endfor %}</table>
+<form method="post" action="/admin/coupon" class="row" style="margin-top:12px"><input type="hidden" name="csrf" value="{{csrf}}"><label>Code<input name="code" required></label><label>% off<input name="percent" type="number" min="1" max="90" required></label><button class="btn solid sm" style="align-self:flex-end">Add / update coupon</button></form>
+{% endif %}</div></section>{% endblock %}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}ALURA EverNew{% endblock %} · ALURA EverNew</title>
+<meta name="description" content="{% block desc %}Professional interior protection treatment powered by Bacti Barrier™ Technology. Don't just clean. Protect.{% endblock %}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+</head><body>
+{% set path = request.path %}
+<header class="top"><div class="wrap">
+  <a class="logo" href="/" aria-label="ALURA EverNew home"><b>ALURA</b><span>EverNew</span></a>
+  <nav class="main" aria-label="Main">
+    {% for href,label in [('/','Home'),('/shop','Shop'),('/how-it-works','How it works'),('/business','For business'),('/about','About &amp; contact')] %}
+    <a href="{{href}}" class="{{ 'on' if path==href }}">{{label|safe}}</a>{% endfor %}
+  </nav>
+  <div class="hdr-right">
+    <a class="cartbtn" href="/cart" aria-label="Cart"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 11h10.6l2-8H6.6"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg><span class="badge" id="cart-count" data-n="0"></span></a>
+    <a class="btn sm" href="/shop">Order now</a>
+  </div>
+</div></header>
+<main>{% block content %}{% endblock %}</main>
+<footer class="foot"><div class="wrap">
+  <div class="fgrid">
+    <div><a class="logo" href="/" style="display:flex"><b>ALURA</b><span>EverNew</span></a>
+      <p class="cond" style="font-size:24px;color:#fff;margin-top:14px;font-weight:700">Don't just clean. Protect.</p>
+      <p>Professional interior protection treatment, powered by Bacti Barrier™ Technology. For professional use only.</p></div>
+    <div><h4>SHOP</h4><a href="/shop">ALURA EverNew</a><a href="/cart">Cart</a><a href="/business">Bulk orders</a></div>
+    <div><h4>LEARN</h4><a href="/how-it-works">How it works</a><a href="/how-it-works#guide">Application guide</a><a href="/how-it-works#faq">FAQ</a></div>
+    <div><h4>COMPANY</h4><a href="/about">About ALURA</a><a href="/business">Become a partner</a><a href="/about#contact">Contact us</a>
+      <h4 style="margin-top:20px">GET IN TOUCH</h4><p>{{site.phone}}</p><p>{{site.email}}</p><p>{{site.address}}</p></div>
+  </div>
+  <div class="legal"><span>© {{site.year}} {{site.company}} All rights reserved.</span><a href="/privacy">Privacy policy</a><a href="/terms">Terms of sale</a><a href="/shipping">Shipping &amp; delivery</a><a href="/returns">Returns &amp; refunds</a></div>
+</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="{{ url_for('static', filename='js/site.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body></html>

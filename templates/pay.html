@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Payment{% endblock %}
+{% block content %}
+<section class="sec" style="min-height:60vh"><div class="wrap" style="max-width:640px">
+  <h1 class="h2" style="margin-bottom:16px">Complete your payment</h1>
+  <div class="card"><p>Order <b>{{o.order_no}}</b> · {{pay_label}}</p><p class="price" style="font-size:40px;margin:0 0 12px">{{o.total|inr}}</p>
+  {% if failed %}<div class="warnbox" style="margin-bottom:14px">Payment failed (simulated). You can try again.</div>{% endif %}
+  {% if demo %}
+    <div class="notice" style="margin-bottom:16px"><b>Demo payment page.</b> No real money moves. Connect a payment gateway before going live (see README).</div>
+    <form method="post" action="{{ url_for('pay_complete', order_no=o.order_no) }}" class="row">
+      <input type="hidden" name="t" value="{{o.token}}">
+      <button class="btn solid" name="result" value="success">Simulate successful payment</button>
+      <button class="btn ghost" name="result" value="fail">Simulate failed payment</button></form>
+  {% else %}<p>Payment gateway not configured.</p>{% endif %}</div>
+</div></section>
+{% endblock %}

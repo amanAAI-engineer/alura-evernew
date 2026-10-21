@@ -1,0 +1,57 @@
+{% extends "base.html" %}{% block title %}Shop ALURA EverNew{% endblock %}
+{% block content %}
+<section class="sec" style="padding-top:36px"><div class="wrap">
+  <p style="margin:0 0 20px;color:var(--grey)"><a href="/">Home</a> / Shop / <b>ALURA EverNew</b></p>
+  <div class="grid g2" style="align-items:start;gap:48px">
+    <div>
+      <div class="gal" id="gal"><div id="galView">{% include "_bottle.html" %}</div></div>
+      <div class="thumbs" role="group" aria-label="Product views">
+        {% for v in ['Bottle','Label front','Label back','In use'] %}<button type="button" aria-pressed="{{ 'true' if loop.first else 'false' }}" data-v="{{v}}">{{v}}</button>{% endfor %}
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="eyebrow">Professional interior protection treatment</div>
+      <h1 class="h1" style="font-size:clamp(44px,5vw,72px)">ALURA EverNew</h1>
+      <p class="lead" style="font-size:19px">Long-lasting interior surface protection from staining and discoloration. Applied after interior cleaning, it forms an antimicrobial surface layer powered by Bacti Barrier™ Technology.</p>
+      <div><span class="price" id="price">–</span><div style="color:var(--grey)">for <span id="packLabel"></span> · inclusive of all taxes</div></div>
+      <div><b>Pack size</b><div class="seg" id="packs" style="margin-top:8px">
+        {% for p in packs %}<button type="button" data-id="{{p.id}}" data-price="{{p.price}}" data-stock="{{p.stock}}" aria-pressed="false">{{p.label}}</button>{% endfor %}</div></div>
+      <div><b>Quantity</b><div style="margin-top:8px"><div class="qty"><button type="button" id="dec" aria-label="Decrease quantity">−</button><span id="qty">1</span><button type="button" id="inc" aria-label="Increase quantity">+</button></div></div></div>
+      <div class="row"><button class="btn solid" id="add" type="button">Add to cart</button><button class="btn ghost" id="buy" type="button">Buy now</button></div>
+      <div id="stockmsg" class="err"></div>
+      <div><b>Check delivery</b><div class="row" style="flex-wrap:nowrap;margin-top:8px"><input id="pin" inputmode="numeric" maxlength="6" placeholder="Enter pincode" aria-label="Pincode"><button class="btn ghost" id="pinbtn" type="button">Check</button></div><div id="pinmsg" style="margin-top:6px;font-weight:600"></div></div>
+      <div class="checks" style="color:var(--grey);flex-direction:column"><span>Non-toxic and non-leaching</span><span>GST invoice available for business orders</span></div>
+      <p style="margin:0">Need larger volumes? <a class="link" href="/business">Ask for bulk pricing</a></p>
+    </div>
+  </div>
+</div></section>
+<section class="sec white"><div class="wrap grid g2" style="gap:48px">
+  <div><h2 class="h2" style="margin-bottom:14px">About the product</h2>
+    <p>EVERNEW is a professional interior protection treatment designed to be applied after interior cleaning. Its antimicrobial surface-protection technology protects interior surfaces against microbial growth, helping keep your car's interior fresher and better protected between deep cleans.</p>
+    <p>✓ Protection against untimely color fading<br>✓ Longer interior preservation<br>✓ Protection against microbial contamination</p></div>
+  <div><h2 class="h2" style="margin-bottom:14px">Specifications</h2>
+    <dl class="spec"><dt>Pack size</dt><dd id="specPack"></dd><dt>Technology</dt><dd>Bacti Barrier™</dd><dt>Application</dt><dd>Spray on cleaned, dry surfaces; allow to dry naturally</dd><dt>Approved surfaces</dt><dd>Seats, seat belts, armrests, door interiors, steering wheel, dashboard</dd><dt>Do not use on</dt><dd>Glass and screens</dd><dt>Safety</dt><dd>Non-toxic, non-leaching</dd><dt>Coverage per pack</dt><dd>[To be added]</dd><dt>Shelf life</dt><dd>[To be added]</dd></dl></div>
+</div></section>
+<section class="sec dark"><div class="wrap"><h2 class="h2" style="margin-bottom:24px">How to use</h2>
+  <div class="grid g4">{% for n,t,d in [('01','Clean','Thoroughly clean the interior.'),('02','Dry','Make sure the surfaces to be treated are clean and dry.'),('03','Apply','Spray EverNew evenly on approved interior surfaces.'),('04','Cure','Allow the treatment to dry naturally for full effectiveness.')] %}
+  <div class="card"><div class="num">{{n}}</div><h3>{{t}}</h3><p style="margin:0;color:var(--mute)">{{d}}</p></div>{% endfor %}</div></div></section>
+{% endblock %}
+{% block scripts %}<script>
+const packs=$$('#packs button'); let cur=packs.find(b=>+b.dataset.stock>0)||packs[0], qty=1;
+function paint(){
+  packs.forEach(b=>b.setAttribute('aria-pressed',b===cur));
+  if(!cur){$('#price').textContent='Unavailable';return}
+  $('#price').textContent=money(+cur.dataset.price); $('#packLabel').textContent=cur.textContent; $('#specPack').textContent=cur.textContent;
+  $('#qty').textContent=qty; const low=+cur.dataset.stock<qty;
+  $('#stockmsg').textContent=low?'Only '+cur.dataset.stock+' in stock for this pack.':''; $('#add').disabled=$('#buy').disabled=low||+cur.dataset.stock<1;
+}
+packs.forEach(b=>b.onclick=()=>{cur=b;paint()});
+$('#dec').onclick=()=>{qty=Math.max(1,qty-1);paint()}; $('#inc').onclick=()=>{qty=Math.min(500,qty+1);paint()};
+$('#add').onclick=()=>{Cart.add(cur.dataset.id,qty);toast('Added to cart. <a href="/cart">View cart</a>')};
+$('#buy').onclick=()=>{Cart.add(cur.dataset.id,qty);location.href='/checkout'};
+$$('.thumbs button').forEach(b=>b.onclick=()=>{$$('.thumbs button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $('#galView').innerHTML=b.dataset.v==='Bottle'?`{% filter replace('`','') %}{% include "_bottle.html" %}{% endfilter %}`:'<div class="ph" style="width:80%;background:transparent">'+b.dataset.v+' photo placeholder<br>(add images in static/img)</div>'});
+async function checkPin(){const v=$('#pin').value.trim(),m=$('#pinmsg');const r=await api('/api/pincode/'+encodeURIComponent(v));m.style.color=r.ok?'var(--green)':'var(--warn)';m.textContent=r.data.message||'Could not check that pincode.'}
+$('#pinbtn').onclick=checkPin; $('#pin').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
+paint();
+</script>{% endblock %}

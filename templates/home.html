@@ -1,0 +1,71 @@
+{% extends "base.html" %}{% block title %}Don't just clean. Protect.{% endblock %}
+{% block content %}
+<section class="dark"><div class="wrap" style="padding-top:72px;padding-bottom:80px;display:flex;flex-wrap:wrap;align-items:center;gap:48px">
+  <div style="flex:1 1 520px;display:flex;flex-direction:column;gap:26px">
+    <span class="pill" style="align-self:flex-start">Professional interior protection treatment</span>
+    <h1 class="h1">Don't just clean.<br><span class="accent">Protect.</span></h1>
+    <p class="lead">Long-lasting interior surface protection from staining and discoloration. Applied after cleaning, powered by Bacti Barrier™ Technology.</p>
+    <div class="row"><a class="btn" href="/shop">Order now</a><a class="btn line" href="/how-it-works">How it works</a></div>
+    <div class="checks"><span>Non-toxic &amp; non-leaching</span><span>Applied after interior cleaning</span><span>For professional use</span></div>
+  </div>
+  <div style="flex:1 1 360px;display:flex;justify-content:center">{% include "_bottle.html" %}</div>
+</div></section>
+
+<section class="teal"><div class="wrap" style="padding:28px 24px"><p class="cond" style="font-size:clamp(24px,3vw,34px);font-weight:700;text-transform:uppercase">Your customer's car gets cleaned today. What protects the interior tomorrow?</p></div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="eyebrow">The problem</div><h2 class="h2" style="margin:8px 0 12px">Don't let your life spoil your car interior</h2>
+  <p class="lead">Everyday life leaves a significant amount of biological and organic residue building up in your car interior.</p>
+  <div class="grid g6" style="margin:32px 0 40px">{% for t in ['Food','Drinks','Kids','Pets','Sweat','Spills &amp; vomit'] %}<div class="chip">{{t|safe}}</div>{% endfor %}</div>
+  <div class="grid g3">
+  {% for n,t in [('01','Organic residues lead to invisible microbes building up on interior surfaces.'),('02','You clean the visible dirt, but invisible microbes remain on the surfaces.'),('03','Your surfaces may still look clean, but can be home to billions of microbes.'),('04','These invisible microbes slowly release biochemicals.'),('05','These biochemicals gradually discolor or deteriorate premium surfaces, showing up in patches over time.')] %}
+    <div class="card"><div class="num" style="color:var(--green)">{{n}}</div><p style="margin:8px 0 0">{{t}}</p></div>{% endfor %}
+  </div>
+</div></section>
+
+<section class="sec dark"><div class="wrap">
+  <div class="eyebrow">The solution</div><h2 class="h2" style="margin:8px 0 12px">Clean. <span class="accent">Protect.</span> Preserve.</h2>
+  <p class="lead">ALURA EverNew is designed to make interior protection the next step after cleaning.</p>
+  <div class="grid g3" style="margin-top:32px">
+    {% for s,t,d in [('Step 1','Interior cleaning','Your usual deep clean removes the visible dirt.'),('Step 2','ALURA EverNew','Sprayed evenly on suitable surfaces once they are clean and dry.'),('Step 3','Protected interior','Once dry, an antimicrobial surface layer keeps working between deep cleans.')] %}
+    <div class="card"><div class="eyebrow">{{s}}</div><h3>{{t}}</h3><p style="color:var(--mute);margin:0">{{d}}</p></div>{% endfor %}
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap two" style="align-items:center">
+  <div><div class="eyebrow">Powered by</div><h2 class="h2" style="margin:8px 0 14px">Bacti Barrier™ Technology</h2>
+  <p class="lead" style="max-width:none">After the interior is thoroughly cleaned and dried, EverNew is applied to suitable interior surfaces. Once dry, the treatment forms a protective antimicrobial surface layer that keeps eliminating the microbes that cause deterioration and discoloration of surfaces.</p></div>
+  <div class="card"><h3>Three ways EverNew protects</h3>
+    <p>✓ Protection against untimely color fading</p><p>✓ Longer interior preservation</p><p style="margin:0">✓ Protection against microbial contamination</p></div>
+</div></section>
+
+<section class="sec white"><div class="wrap">
+  <div class="two" style="grid-template-columns:1fr 1fr">
+  <div><h2 class="h2" style="margin-bottom:20px">Where to apply</h2>
+    <div class="grid g3">{% for t in ['Seats','Seat belts','Armrests','Door interiors','Steering wheel','Dashboard'] %}<div class="chip">{{t}}</div>{% endfor %}</div>
+    <p class="warnbox" style="margin-top:20px"><b>Do not use on glass or screens.</b></p></div>
+  <div><h2 class="h2" style="margin-bottom:20px">How to use</h2>
+    {% for n,a,b in [(1,'Clean.','Thoroughly clean the interior.'),(2,'Dry.','Make sure the surfaces to be treated are clean and dry.'),(3,'Apply.','Spray EverNew evenly on approved interior surfaces.'),(4,'Cure.','Allow the treatment to dry naturally for full effectiveness.')] %}
+    <div class="row" style="flex-wrap:nowrap;align-items:flex-start;margin-bottom:12px"><span class="stepn" style="color:var(--green)">{{n}}</span><p style="margin:6px 0 0"><b>{{a}}</b> {{b}}</p></div>{% endfor %}
+    <a class="link" href="/how-it-works#guide">Full application guide →</a></div>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="eyebrow">Built for professionals</div><h2 class="h2" style="margin:8px 0 28px">Add protection to every interior clean</h2>
+  <div class="grid g3">{% for t,d in [('Detailing studios','Offer protection as the finishing step of every interior detail.'),('Car wash &amp; service workshops','Turn routine interior cleaning into a value-added protection service.'),('Dealerships &amp; fleets','Help showroom, pre-owned and fleet interiors stay newer for longer.')] %}
+  <div class="card"><h3>{{t|safe}}</h3><p style="margin:0">{{d}}</p></div>{% endfor %}</div>
+  <p style="margin-top:24px"><a class="btn solid" href="/business">Partner with us</a></p>
+</div></section>
+
+<section class="sec dark"><div class="wrap">
+  <h2 class="h2" style="margin-bottom:24px">See the difference</h2>
+  <div class="grid g2"><div><div class="eyebrow">Untreated surface</div><div class="ph">Image or video placeholder<br>(add your photos in static/img)</div></div>
+  <div><div class="eyebrow">Treated with ALURA EverNew</div><div class="ph">Image or video placeholder</div></div></div>
+</div></section>
+
+<section class="teal"><div class="wrap" style="padding:56px 24px;text-align:center">
+  <h2 class="h2">Don't just clean. Protect.</h2><p style="font-size:20px">Order online, or talk to us about bulk supply for your business.</p>
+  <div class="row" style="justify-content:center"><a class="btn solid" href="/shop">Order now</a><a class="btn ghost" href="/business">Bulk enquiry</a></div>
+</div></section>
+{% endblock %}

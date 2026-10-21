@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% block title %}For business — bulk orders & partners{% endblock %}
+{% block content %}
+<section class="dark"><div class="wrap" style="padding:72px 24px"><div class="eyebrow">For business · Bulk orders · Partners</div>
+  <h1 class="h1" style="font-size:clamp(44px,6vw,84px);margin:10px 0 18px">Your customer's car gets cleaned today.<br><span class="accent">What protects it tomorrow?</span></h1>
+  <p class="lead">Make interior protection the next step after every clean. Supply EverNew to your detailing, car wash or dealership business.</p>
+  <p style="margin-top:24px"><a class="btn" href="#enquiry">Send a bulk enquiry</a></p></div></section>
+<section class="sec"><div class="wrap"><h2 class="h2" style="margin-bottom:24px">What partners get</h2>
+  <div class="grid g4">{% for t,d in [('Volume pricing','Pricing for regular and bulk orders, shared on request.'),('GST invoicing','Business invoices with your GSTIN on every order.'),('Product material','Vendor catalogue and product information to share with your customers.'),('Application guidance','Help from the ALURA team to apply EverNew correctly.')] %}
+  <div class="card"><h3>{{t}}</h3><p style="margin:0">{{d}}</p></div>{% endfor %}</div></div></section>
+<section class="sec white" id="enquiry"><div class="wrap two">
+  <div><h2 class="h2" style="margin-bottom:8px">Bulk &amp; partner enquiry</h2><p>Tell us about your business and we'll get back to you with pricing and next steps.</p>
+    <div id="done" class="notice" hidden role="status"><h3 class="cond" style="font-size:28px">Thanks, we've got your enquiry</h3><p>Our team will contact you shortly.</p><button class="btn ghost sm" id="again" type="button">Send another enquiry</button></div>
+    <form id="f" novalidate class="formgrid">
+      <label>Business name<input name="business" required></label><label>Contact person<input name="person" autocomplete="name" required></label>
+      <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label><label>Email<input name="email" type="email" autocomplete="email" required></label>
+      <label>Business type<select name="btype">{% for o in ['Detailing studio','Car wash / service workshop','Dealership','Fleet operator','Distributor / reseller','Other'] %}<option>{{o}}</option>{% endfor %}</select></label>
+      <label>City<input name="city" required></label>
+      <label>Interiors cleaned per month<select name="volume">{% for o in ['Under 50','50–200','200–500','500+'] %}<option>{{o}}</option>{% endfor %}</select></label>
+      <label>GSTIN (optional)<input name="gstin" maxlength="15" style="text-transform:uppercase"></label>
+      <label class="full">Message<textarea name="message" rows="4"></textarea></label>
+      <div class="hp" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
+      <div class="full" data-err="form"></div>
+      <div class="full"><button class="btn solid" type="submit" style="min-height:52px">Submit enquiry</button><p style="font-size:14px;color:var(--grey)">By submitting, you agree to be contacted about ALURA EverNew.</p></div>
+    </form></div>
+  <aside class="card"><h3>Prefer to talk?</h3><p>{{site.phone}}</p><p style="margin:0">{{site.email}}</p></aside>
+</div></section>
+{% endblock %}
+{% block scripts %}<script>
+const f=$('#f');wireForm(f,'/api/enquiry',()=>{f.hidden=true;$('#done').hidden=false});
+$('#again').onclick=()=>{$('#done').hidden=true;f.hidden=false};
+</script>{% endblock %}

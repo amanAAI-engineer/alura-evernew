@@ -1,0 +1,24 @@
+# Production setup: the app + Caddy (automatic HTTPS certificates).
+# 1) copy .env.example to .env and fill it in   2) edit DOMAIN in .env   3) docker compose up -d --build
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - HTTPS=true
+    volumes:
+      - alura_data:/app/instance      # database + secrets live here - keep this volume!
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [app]
+volumes:
+  alura_data:
+  caddy_data:

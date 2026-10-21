@@ -1,0 +1,53 @@
+{% extends "base.html" %}{% block title %}Checkout{% endblock %}
+{% block content %}
+<section class="sec" style="padding-top:40px"><div class="wrap"><h1 class="h2" style="margin-bottom:6px">Checkout</h1>
+  <p style="color:var(--grey);margin:0 0 24px">✓ Cart &nbsp;›&nbsp; <b>2 Details &amp; payment</b> &nbsp;›&nbsp; 3 Confirmation</p>
+  <div id="empty" class="card" hidden style="text-align:center;padding:48px"><h3>Your cart is empty</h3><p><a class="btn solid" href="/shop">Shop EverNew</a></p></div>
+  <form id="f" class="two" novalidate hidden>
+    <div style="display:grid;gap:28px">
+      <div class="card"><h3>1. Contact details</h3><div class="formgrid">
+        <label class="full">Full name<input name="name" autocomplete="name"></label>
+        <label>Mobile number<input name="phone" type="tel" autocomplete="tel"></label><label>Email<input name="email" type="email" autocomplete="email"></label></div></div>
+      <div class="card"><h3>2. Delivery address</h3><div class="formgrid">
+        <label class="full">Address line 1<input name="line1" autocomplete="address-line1"></label><label class="full">Address line 2 (optional)<input name="line2" autocomplete="address-line2"></label>
+        <label>City<input name="city" autocomplete="address-level2"></label><label>PIN code<input name="pin" inputmode="numeric" maxlength="6" autocomplete="postal-code"></label>
+        <label class="full">State<select name="state" autocomplete="address-level1"><option value="">Select state</option>{% for s in states %}<option>{{s}}</option>{% endfor %}</select></label></div>
+        <label style="flex-direction:row;align-items:center;gap:12px;margin-top:18px"><input type="checkbox" name="business" id="biz"> I'm buying for a business and need a GST invoice</label>
+        <div class="formgrid" id="bizf" hidden style="margin-top:14px"><label>Business name<input name="biz_name"></label><label>GSTIN<input name="gstin" maxlength="15" style="text-transform:uppercase"></label></div></div>
+      <div class="card"><h3>3. Delivery</h3><div style="display:grid;gap:10px" data-err="ship">
+        {% for id,s in shipping.items() %}<label class="opt" style="flex-direction:row;font-weight:400"><input type="radio" name="ship" value="{{id}}" {{ 'checked' if loop.first }}><span><b>{{s.label}}</b><small data-eta="{{id}}">{{s.metro[0]}}–{{s.rest[1]}} business days</small></span><span class="r" data-fee="{{id}}">₹ {{ s.fee//100 }}</span></label>{% endfor %}</div></div>
+      <div class="card"><h3>4. Payment method</h3><div style="display:grid;gap:10px" data-err="pay">
+        {% for id,(l,n) in payments.items() if id!='cod' or cod_enabled %}<label class="opt" style="flex-direction:row;font-weight:400"><input type="radio" name="pay" value="{{id}}" {{ 'checked' if loop.first }}><span><b>{{l}}</b><small>{{n}}</small></span></label>{% endfor %}</div>
+        <p style="color:var(--grey);margin:12px 0 0">You'll complete payment securely with our payment partner after placing the order.</p></div>
+    </div>
+    <aside class="sum"><h3 class="cond" style="font-size:28px;text-transform:uppercase;margin-bottom:10px">Order summary</h3><div id="slines"></div>
+      <div class="ln"><span>Subtotal</span><span id="sub"></span></div><div class="ln" id="discRow" hidden><span>Discount</span><span id="disc"></span></div>
+      <div class="ln"><span id="shipLbl">Delivery</span><span id="shipFee"></span></div><div class="ln"><span>GST</span><span>Included</span></div>
+      <div class="ln tot"><span>Total</span><span id="total"></span></div>
+      <label style="flex-direction:row;gap:12px;font-weight:400;margin-top:14px;align-items:flex-start"><input type="checkbox" name="agree" checked> <span>I understand EverNew is for professional use, and I agree to the <a href="/terms" target="_blank" style="color:var(--green)">terms of sale</a>.</span></label>
+      <div data-err="agree"></div><div data-err="cart"></div><div data-err="form"></div>
+      <div class="hp" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
+      <button class="btn solid" id="place" type="submit" style="width:100%;margin-top:14px;min-height:54px;font-size:18px">Place order</button>
+      <p style="margin:12px 0 0"><a class="link" href="/cart" style="text-decoration:none">← Back to cart</a></p></aside>
+  </form></div></section>
+{% endblock %}
+{% block scripts %}<script>
+const f=$('#f'); let price=null, pinTimer;
+const shipVal=()=>f.elements.ship.value, payLabel=()=>({upi:'UPI',card:'Card',nb:'Net banking',cod:'Cash on delivery'})[f.elements.pay.value];
+async function refresh(){
+  const c=Cart.read(); const r=await api('/api/cart/price',{items:c.items,coupon:c.coupon,ship:shipVal()}); price=r.data;
+  const has=r.ok&&price.lines.length>0; $('#empty').hidden=has; f.hidden=!has; if(!has)return;
+  $('#slines').innerHTML=price.lines.map(l=>`<div class="ln"><span><b>ALURA EverNew</b><br><small>${esc(l.label)} × ${l.qty}</small></span><span>${money(l.total)}</span></div>`).join('');
+  $('#sub').textContent=money(price.subtotal); $('#discRow').hidden=!price.discount; $('#disc').textContent='− '+money(price.discount);
+  $('#shipLbl').textContent='Delivery ('+(shipVal()==='exp'?'Express':'Standard')+')'; $('#shipFee').textContent=price.ship_fee?money(price.ship_fee):'Free';
+  $('#total').textContent=money(price.total); $('#place').textContent='Place order · '+payLabel();
+}
+$$('input[name=ship],input[name=pay]').forEach(i=>i.onchange=refresh);
+$('#biz').onchange=e=>$('#bizf').hidden=!e.target.checked;
+f.elements.pin.addEventListener('input',()=>{clearTimeout(pinTimer);const v=f.elements.pin.value;if(/^[1-9]\d{5}$/.test(v))pinTimer=setTimeout(async()=>{const r=await api('/api/pincode/'+v);if(r.ok)for(const k in r.data.eta)$('[data-eta='+k+']').textContent=r.data.eta[k]},300)});
+f.addEventListener('submit',async e=>{e.preventDefault();const btn=$('#place');btn.disabled=true;
+  const d=Object.fromEntries(new FormData(f)); d.business=$('#biz').checked; d.agree=f.elements.agree.checked; d.items=Cart.read().items; d.coupon=Cart.read().coupon;
+  const r=await api('/api/orders',d); btn.disabled=false;
+  if(r.ok&&r.data.redirect){Cart.clear();location.href=r.data.redirect}else showErrors(f,r.data.errors||{form:'Could not place your order. Please try again.'})});
+refresh();
+</script>{% endblock %}

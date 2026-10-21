@@ -1,0 +1,47 @@
+{% extends "base.html" %}{% block title %}Your cart{% endblock %}
+{% block content %}
+<section class="sec" style="padding-top:40px;min-height:60vh"><div class="wrap"><h1 class="h2" style="margin-bottom:24px">Your cart</h1>
+  <div id="empty" hidden class="card" style="text-align:center;padding:48px"><h3>Your cart is empty</h3><p><a class="btn solid" href="/shop">Shop EverNew</a></p></div>
+  <div id="full" class="two" hidden>
+    <div><div id="undo" hidden class="notice" style="margin-bottom:16px"><button class="link" id="undoBtn" type="button"></button></div><div id="lines"></div>
+      <p><a class="link" href="/shop" style="text-decoration:none">← Continue shopping</a></p>
+      <p>Ordering for a business? <a class="link" href="/business">Ask for bulk pricing</a></p></div>
+    <aside class="sum"><h3 class="cond" style="font-size:28px;text-transform:uppercase;margin-bottom:12px">Order summary</h3>
+      <div class="ln"><span id="subLbl"></span><b id="sub"></b></div><div class="ln" id="discRow" hidden><span>Discount (<span id="cpn"></span>)</span><b id="disc"></b></div>
+      <div class="ln"><span>Shipping</span><span id="ship">Calculated at checkout</span></div><div class="ln"><span>GST</span><span>Included</span></div>
+      <label style="margin-top:12px">Coupon code<span class="row" style="flex-wrap:nowrap"><input id="coupon" style="height:46px;text-transform:uppercase"><button class="btn ghost sm" id="apply" type="button">Apply</button></span></label><div id="cmsg" style="font-weight:600;min-height:22px"></div>
+      <div class="ln tot"><span>Total</span><span id="total"></span></div>
+      <a class="btn solid" href="/checkout" style="width:100%;margin-top:14px;min-height:54px">Proceed to checkout</a>
+      <p style="text-align:center;color:var(--grey);font-size:14px;margin:12px 0 0">Secure payment · GST invoice available</p></aside>
+  </div></div></section>
+{% endblock %}
+{% block scripts %}<script>
+let removed=null;
+async function render(){
+  const c=Cart.read(); const r=await api('/api/cart/price',{items:c.items,coupon:c.coupon}); const p=r.data;
+  if(r.ok){ // drop items the server no longer sells
+    const valid=new Set(p.lines.map(l=>l.pack)); if(valid.size!==c.items.length){c.items=c.items.filter(i=>valid.has(i.pack));Cart.write(c)} }
+  const has=r.ok&&p.lines.length>0; $('#empty').hidden=has; $('#full').hidden=!has; $('#undo').hidden=!removed;
+  if(removed)$('#undoBtn').textContent='Undo remove ('+removed.label+')';
+  if(!has)return;
+  $('#lines').innerHTML=p.lines.map(l=>`<div class="card" style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+    <div style="width:84px;height:84px;background:var(--ink);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--teal);font:700 14px 'Barlow Condensed'">EverNew</div>
+    <div style="flex:1 1 200px"><h3 style="font-size:24px;margin:0">ALURA EverNew</h3><div style="color:var(--grey)">Pack size: ${esc(l.label)}<br>${money(l.unit)} each</div><button class="link red" data-rm="${esc(l.pack)}" data-label="${esc(l.label)}">Remove</button></div>
+    <div class="qty"><button data-dec="${esc(l.pack)}" aria-label="Decrease quantity">−</button><span>${l.qty}</span><button data-inc="${esc(l.pack)}" aria-label="Increase quantity">+</button></div>
+    <b style="min-width:90px;text-align:right;font-size:20px">${money(l.total)}</b></div>`).join('');
+  $('#subLbl').textContent='Subtotal ('+p.count+' item'+(p.count>1?'s':'')+')'; $('#sub').textContent=money(p.subtotal);
+  $('#discRow').hidden=!p.discount; $('#cpn').textContent=p.coupon||''; $('#disc').textContent='− '+money(p.discount);
+  $('#ship').textContent=p.subtotal-p.discount>=p.free_ship_above?'Free':'Calculated at checkout';
+  $('#total').textContent=money(p.subtotal-p.discount); $('#coupon').value=c.coupon||'';
+  const m=$('#cmsg'); m.style.color=p.coupon_error?'var(--warn)':'var(--green)'; m.textContent=p.coupon_error||(p.coupon?'Coupon applied.':'');
+  if(p.coupon_error){Cart.setCoupon('')}
+}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+  const c=Cart.read(),q=id=>(c.items.find(i=>i.pack===id)||{}).qty;
+  if(t.dataset.inc){Cart.setQty(t.dataset.inc,q(t.dataset.inc)+1);render()}
+  if(t.dataset.dec){Cart.setQty(t.dataset.dec,q(t.dataset.dec)-1);render()}
+  if(t.dataset.rm){removed={pack:t.dataset.rm,qty:q(t.dataset.rm),label:t.dataset.label};Cart.remove(t.dataset.rm);render()}});
+$('#undoBtn').onclick=()=>{if(removed){Cart.add(removed.pack,removed.qty);removed=null;render()}};
+$('#apply').onclick=()=>{Cart.setCoupon($('#coupon').value.trim());render()};
+render();
+</script>{% endblock %}

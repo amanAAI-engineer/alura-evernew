@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block title %}Order confirmed{% endblock %}
+{% block content %}
+<section class="sec" style="padding-top:40px"><div class="wrap" style="max-width:860px">
+  <div class="notice" style="margin-bottom:28px;background:var(--tint)"><div class="eyebrow">Order placed</div>
+    <h1 class="h2" style="margin:6px 0">Thank you. Your order <span style="color:var(--green)">#{{o.order_no}}</span> is confirmed.</h1>
+    <p style="margin:0">We've sent the details to {{o.email}}{% if o.phone %} and {{o.phone}}{% endif %}.</p></div>
+  <div class="grid g3">
+    <div class="card"><div class="eyebrow">Delivering to</div><p style="margin:6px 0 0"><b>{{o.name}}</b><br>{{o.line1}}{% if o.line2 %}, {{o.line2}}{% endif %}<br>{{o.city}} {{o.pin}}, {{o.state}}</p></div>
+    <div class="card"><div class="eyebrow">Estimated delivery</div><p style="margin:6px 0 0"><b>{{eta}}</b><br>Tracking link will be shared on dispatch.</p></div>
+    <div class="card"><div class="eyebrow">Payment</div><p style="margin:6px 0 0"><b>{{pay_label}} · {{o.total|inr}}</b><br>{{ 'Paid' if o.pay_status=='paid' else 'Pay on delivery' }}</p></div>
+  </div>
+  <div class="card" style="margin-top:24px"><h3>Your items</h3>
+    {% for i in items %}<div class="row" style="justify-content:space-between"><span>ALURA EverNew · {{i.label}} × {{i.qty}}</span><b>{{(i.unit_price*i.qty)|inr}}</b></div>{% endfor %}</div>
+  <div class="card" style="margin-top:24px"><h3>What happens next</h3>
+    <p>✓ <b>Order confirmed</b> — just now</p><p>2 &nbsp;<b>Packed &amp; dispatched</b> — tracking shared by SMS and email</p><p style="margin:0">3 &nbsp;<b>Delivered</b> — ready to protect interiors</p></div>
+  <div class="row" style="margin-top:24px"><a class="btn solid" href="{{ url_for('invoice', order_no=o.order_no, t=o.token) }}" target="_blank">Download GST invoice</a>
+    <a class="btn ghost" href="/how-it-works#guide">Read the application guide</a><a class="btn ghost" href="/">Back to home</a></div>
+  <p>Questions about your order? <a class="link" href="/about#contact">Contact us</a></p>
+</div></section>
+{% endblock %}
+{% block scripts %}<script>Cart.clear()</script>{% endblock %}

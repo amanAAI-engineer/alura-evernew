@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% block title %}About & contact{% endblock %}
+{% block content %}
+<section class="sec"><div class="wrap two" style="align-items:center">
+  <div><div class="eyebrow">About ALURA</div><h1 class="h1" style="font-size:clamp(44px,5.4vw,76px);margin:10px 0 18px">Making protection the next step after cleaning</h1>
+  <p class="lead">ALURA EverNew is promoted by {{site.company}} We created EverNew so that a clean interior stays protected, helping car interiors resist the staining, discoloration and deterioration caused by invisible microbes.</p>
+  <p style="color:var(--grey)">[Company story, founders and milestones to be added.]</p></div>
+  <div class="ph" style="min-height:320px;background:#fff;color:var(--grey);border-color:var(--line)">Photo placeholder · team or facility</div>
+</div></section>
+<section class="sec white" id="contact"><div class="wrap two">
+  <div><h2 class="h2" style="margin-bottom:16px">Contact us</h2>
+    <dl class="spec" style="grid-template-columns:120px 1fr"><dt>Phone</dt><dd>{{site.phone}}</dd><dt>Email</dt><dd>{{site.email}}</dd><dt>Address</dt><dd>{{site.company}}<br>{{site.address}}</dd><dt>Hours</dt><dd>{{site.hours}}</dd></dl>
+    <div class="ph" style="margin-top:20px;min-height:180px;background:var(--bg);color:var(--grey);border-color:var(--line)">Map placeholder</div></div>
+  <div><div id="done" class="notice" hidden role="status"><h3 class="cond" style="font-size:28px">Message sent</h3><p>Thanks for reaching out. We'll reply as soon as we can.</p><button class="btn ghost sm" id="again" type="button">Send another message</button></div>
+  <form id="f" novalidate class="formgrid">
+    <label>Your name<input name="name" autocomplete="name" required></label><label>Email or phone<input name="contact" required></label>
+    <label>Topic<select name="topic">{% for o in ['Order support','Product question','Bulk order or partnership','Other'] %}<option>{{o}}</option>{% endfor %}</select></label>
+    <label>Order number (if any)<input name="order_no" placeholder="ALR-000000"></label>
+    <label class="full">Message<textarea name="message" rows="5" required></textarea></label>
+    <div class="hp" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
+    <div class="full" data-err="form"></div>
+    <div class="full"><button class="btn solid" type="submit" style="min-height:52px">Send message</button></div>
+  </form></div>
+</div></section>
+{% endblock %}
+{% block scripts %}<script>
+const f=$('#f');wireForm(f,'/api/contact',()=>{f.hidden=true;$('#done').hidden=false});
+$('#again').onclick=()=>{$('#done').hidden=true;f.hidden=false};
+</script>{% endblock %}
